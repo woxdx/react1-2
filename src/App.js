@@ -1,9 +1,23 @@
 import logo from './logo.svg';
 import './App.css';
+import Welcome from './Welcome';
+import Clock from './chapter_04/Clock';
+import CommentList from './chapter_05/CommentList';
+import NotificationList from './chapter_06/NotificationList';
 
 function App() {
   return (
     <div className="App">
+
+      <NotificationList />
+
+      <CommentList />
+
+      <Welcome name="박준한"/>
+      <Welcome name="신호진"/>
+      <Welcome name="지현수"/>
+      
+      <Clock></Clock>
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -18,6 +32,7 @@ function App() {
           Learn React
         </a>
       </header>
+      
     </div>
   );
 }

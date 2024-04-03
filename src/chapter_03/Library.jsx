@@ -9,4 +9,4 @@ export default function Library(){
             <Book name="처음 만난 리액트" numOfPage={500} />
         </div>
     );
-}
+} 

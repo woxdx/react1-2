@@ -7,4 +7,4 @@ export default function Book(props) {
             <h2>{`이 책의 총 ${props.numOfPage}페이지로 이뤄져 있습니다.`}</h2>
         </div>
     );
-}
+} 
