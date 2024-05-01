@@ -1,6 +1,114 @@
 # 이원도 202230226
-## 5월 1일
+## 5월 8일
+
 내용
+## 5월 1일
+
+### 훅의 규칙
+- 첫 번째 규칙은 무조건 최상위 레벨에서만 호출해야 한다는 것입니다.
+- 따라서 반복문이나 조건문 또는 중첩된 함수들 안에서 훅을 호출하면 안 됩니다.
+- 이 규칙에 따라서 훅은 컴포넌트가 렌더링 될 때마다 같은 순서로 호출되어야 합니다.
+- 아래 코드는 조건에 따라 호출되기 때문에 잘못된 코드입니다.
+```js
+function MyComponent(props) {
+  const [name, setName] = useState('Inje');
+
+  if(name !== ''){
+    useEffect(() => {
+      ...
+    })
+  }
+
+  ...
+}
+```
+- 두 번째 규칙은 함수형 컴포넌트에서만 훅을 호출해야 한다는 것입니다.
+- 따라서 일반 자바스크립트 함수에서 훅을 호출하면 안 됩니다.
+- 훅은 함수형 컴포넌트 혹은 직접 만든 커스텀 훅에서만 호출할 수 있습니다.
+
+### 나만의 훅 만들기
+- 필요 하다면 직접 훅을 만들어 쓸 수도 있습니다. 이것을 커스텀 훅 이라고 합니다.
+- 커스텀 훅을 만들어야 하는 상황
+- 다음 예는 연락처 목록을 제공하는데, 온라인인 사용자의 이름은 초록색으로 표시하는 UserListItem 컴포넌트 입니다.
+
+### 커스텀 훅 추출하기
+- 한가지 주의할 점은 일반 컴포넌트와 마찬가지로 다른 훅을 호출하는 것은 무조건 훅의 상위 레벨에서만 해야 합니다.
+- 이름은 use로 시작되도록 합니다. 그렇지 않으면 다른 훅를 불러올 수 없습니다.
+- useUserStatus() 훅의 목적은 사용자의 온라인/오프라인 상태를 구독하는 것 입니다.
+
+### 커스텀 훅 사용하기
+- 2에서 작성했던 코드를 사용자 훅을 사용해서 수정하면 다음과 같습니다.
+```js 
+export default function UserStatus (props) {
+    const isOnline = useUserStatus(props.user.id)
+    
+    if (isOnline === null) {
+        return '대기중...'
+    }
+    return isOnline ? '온라인' : '오프라인'
+}
+
+export default function UserListItem (props) {
+    const isOnline = useUserStatus(props.user.id)
+    
+    return(
+        <li style={{ color: isOnline ? 'green' : 'black'}}>
+            {props.user.name}
+        </li>
+    )
+}
+```
+
+### 이벤트 처리하기
+- DOM 클릭 이벤트를 처리하는 예제 코드
+```js
+<button onClick="activate()">
+    Activate
+</button>
+```
+-React에서 클릭 이벤트 처리하는 예제 코드
+```js
+<button onClick={activate}>
+    Activate
+</button>
+```
+- 둘의 차이점은
+1. 이벤트 이름이 onclick에서 onClick으로 변경 (Camel case)
+
+2. 전달하려는 함수는 문자열에서 함수 그대로 전달
+
+- 이벤트가 발생했을 때 해당 이벤트를 처리하는 함수를 "이벤트 핸들러(Event Handler)"라고 합니다. 또는 이벤트가 발생하는 것을 계속 듣고 있다는 의미로 "이벤트 리스너(Event Listener)"라고 부르기도합니다.
+
+### 이벤트 핸들러 추가하는 방법은?
+```js
+class Toggle extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {isToggleOn: true};
+
+    this.handleClick = this.handleClick.bind(this);
+
+  }
+  handleClick() {
+    this.setState(prevState => ({
+      isToggleOn: !prevState.isToggleOn
+    }));
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        {this.state.isToggleOn ? '켜짐' : '꺼짐'}
+      </button>
+    );
+  }
+}
+```
+- 버튼을 클릭하면 이벤트 핸들러 함수인 handleClick()함수를 호출 하도록 되어 있습니다.
+- bind를 사용하지 않으면 this.handleClick은 글로벌 스코프에서 호출되어 undefind으로 사용할 수 없기 때문입니다.
+- bind를 사용하지 않으려면 화살표 함수를 사용하는 방법도 있습니다.
+- 하지만 클래스 컴포넌트는 이제 거의 사용하지 않기 때문에 이 내용은 참고만 합니다.
 
 ## 4월 17일 강의
 
@@ -41,7 +149,7 @@ export default function Counter(props) {
 }
 ```
 
-### UseEffect
+### useEffect
 - useState와 함께 가장 많이 사용하는 Hook입니다.
 - 이 함수는 사이드 이펙트를 수행하기 위한 것입니다.
 - 영어로 side effect는 부작용을 의미합니다. 일반적으로 프로그래밍에서 사이트 이펙트는 '개발자가 의도하지 않은 코드가 실행되면서 버그가 발생하는 것'을 말합니다.
@@ -142,7 +250,7 @@ function App(props) {
 위의 코드처럼 props를 vlaue를 할당 할 수도 있고, 직접 중괄호를 사용하여 할당할 수도 있습니다.<br>
 JSX를 사용하지 않는 경우 props의 전달 방법은 createElement()함수를 사용하는 것입니다.
 
-## <컴포넌트 만들기>
+### <컴포넌트 만들기>
 ### 컴포넌트의 종류
 - 리액트 초기 버전을 사용할 때는 클래스형 컴포넌트를 주로 사용했습니다.
 - 이후 Hook이라는 개념이 나오면서 최근에는 함수형 컴포넌트를 주로 사용합니다.
