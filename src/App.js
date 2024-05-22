@@ -13,11 +13,12 @@ import LoginControl from './chapter_08/LoginControl';
 import MainPage from './chapter_08/MainPage';
 import Toolbar from './chapter_08/Toolbar';
 import LangdingPage from './chapter_08/LangdingPage';
+import NumberList from './chapter_09/NumberList';
 
 function App() {
   return (
     <>
-      <LangdingPage />
+      <NumberList />
     </>
   );
 }
