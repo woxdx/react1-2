@@ -1,5 +1,4 @@
 import logo from './logo.svg';
-import './App.css';
 import Welcome from './Welcome';
 import Clock from './chapter_04/Clock';
 import CommentList from './chapter_05/CommentList';
@@ -7,39 +6,19 @@ import NotificationList from './chapter_06/NotificationList';
 import Counter from './Counter';
 import FocusButton from './FocusButton';
 import MeasureEx from './MeasureEx';
+import Accommodate from './chapter_08/Accommodate';
+import Toggle from './chapter_08/Toggle';
+import MyButton from './chapter_08/MyButton';
+import LoginControl from './chapter_08/LoginControl';
+import MainPage from './chapter_08/MainPage';
+import Toolbar from './chapter_08/Toolbar';
+import LangdingPage from './chapter_08/LangdingPage';
 
 function App() {
   return (
     <>
-      <MeasureEx />
+      <LangdingPage />
     </>
-    // <div className="App">
-
-    //   <NotificationList />
-
-    //   <CommentList />
-
-    //   <Welcome name="박준한"/>
-    //   <Welcome name="신호진"/>
-    //   <Welcome name="지현수"/>
-      
-    //   <Clock></Clock>
-    //   <header className="App-header">
-    //     <img src={logo} className="App-logo" alt="logo" />
-    //     <p>
-    //       Edit <code>src/App.js</code> and save to reload.
-    //     </p>
-    //     <a
-    //       className="App-link"
-    //       href="https://reactjs.org"
-    //       target="_blank"
-    //       rel="noopener noreferrer"
-    //     >
-    //       Learn React
-    //     </a>
-    //   </header>
-      
-    // </div>
   );
 }
 
