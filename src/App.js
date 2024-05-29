@@ -1,9 +1,9 @@
-import RequstForm from './chapter_11/RequstForm';
+import BoilingVerdict from './chapter_12/BoilingVerdict';
 
 function App() {
   return (
     <>
-      <RequstForm />
+      <BoilingVerdict celsius="101" />
     </>
   );
 }
