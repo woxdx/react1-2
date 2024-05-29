@@ -1,4 +1,104 @@
 # 이원도 202230226
+## 5월 29일
+### textarea 태그
+- 여러 줄에 걸쳐서 나올 정도의 긴 텍스트를 입력받기 위한 HTML 태그
+- HTML 에서는 아래와 같이 텍스트를 태그가 감싸는 형태로 사용
+```js
+<textarea>
+  이곳에 긴 텍스트가 들어가게 됩니다.
+</textarea>
+```
+- 리액트에서는 `<textarea>` 태그에 value라는 attribute를 사용하여 텍스트를 표시 제어 컴포넌트 방식이므로 값을 컴포넌트의 state를 사용해서 다룰 수 있음
+
+### select 태그
+```js
+<select>
+    <option value="apple">사과</option>
+    <option value="banana">바나나</option>
+    <option selected value="grape">포도</option>
+    <option value="watermelon">수박</option>
+</select>
+```
+- 드롭다운(drop-down) 목록을 보여주기 위한 HTML 태그
+- 여러 가지 옵션 중에서 하나를 선택할 수 있는 기능을 제공
+
+### File input 태그
+- 디바이스의 저장 장치로부터 사용자가 하나 또는 여러 개의 파일을 선택할 수 있게 해주는 HTML 태그
+- 서버로 파일을 업로드하거나 자바스크립트의 File API를 사용해서 파일을 다룰 때 사용
+아래와 같이 `<input>` 태그를 사용하고 타입을 file로 해주면 됩니다.
+- File input 태그는 그 값이 읽기 전용이기 때문에 리액트에서는 비제어 컴포넌트가 됩니다.
+```js
+<input type="file" />
+```
+
+### File input 태그 (여러 개의 입력 다루기)
+- 하나의 컴포넌트에서 여러 개의 입력을 다루기 위해서는 어떻게 해야할까?
+- 여러 개의 state를 선언하여 각각의 입력에 대해 사용하면 됨
+- 아침 식사 선택 유무를 **checkbox type**으로, 방문객 수를 **number type**으로 제출할 수 있는 Reservation 컴포넌트를 작성해보자.
+```js
+import React, {useState} from 'react';
+
+function Reservation(props) {
+    const [haveBreakfast, setHaveBreakfast] = useState(true);
+    const [numberOfGuest, setNumberOfGuest] = useState(2);
+
+    const handleSubmit = (event) => {
+        alert(`아침식사 여부:  ${haveBreakfast}, 방문객 수: ${numberOfGuest}`);
+        event.preventDefault();
+    }
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <label>
+                아침식사 여부:
+                <input type="checkbox" checked={haveBreakfast} 
+                    onChange={(event) => {
+                        setHaveBreakfast(event.target.checked)
+                    }} />
+            </label>
+            <br />
+            <label>
+                방문객 수:
+                <input type="number" value={numberOfGuest} 
+                    onChange={(event) => {
+                        setNumberOfGuest(event.target.value)
+                    }} />
+            </label>
+            <button type="submit">제출</button>
+        </form>
+    )
+}
+
+export default Reservation
+```
+
+### Input Null Value
+- 제어 컴포넌트에 value prop을 정해진 값으로 넣으면 코드를 수정하지 않는 한 입력값을 바꿀 수 없습니다.
+- 만약 value prop은 넣되 자유롭게 입력할 수 있게 만들고 싶다면 값이 undefined 또는 null을 넣어주면 됩니다.
+```js
+ReactDOM.render(<input value="hi" />, rootNode);
+
+setTime(function() {
+    ReactDOM.render(<input value={null} />, rootNode);
+}, 1000);
+```
+### Shared State
+- 어떤 컴포넌트의 state에 있는 데이터를 여러 개의 하위 컴포넌트에서 공통적으로 사용하는 경우
+- 아래와 같이 자식 컴포넌트에서 각각 값을 가지고 있을 필요 없이 부모 컴포넌트에서 가지고 있는 값을 사용하는 경우를 예를 들 수 있음
+
+### 하위 컴포넌트에서 State 공유하기
+- 물의 끓음 여부를 알려주는 컴포넌트
+- 섭씨 온도 값을 props로 전달 받아 물이 끓는지 안끓는지 문자열로 출력해주는 컴포넌트
+```js
+function BoilingVerdict(props) {
+    if (props.celsius >= 100) {
+        return <p>물이 끓습니다.</p>;
+    }
+    return <p>물이 끓지 않습니다.</p>;
+}
+```
+
+
 ## 5월 22일
 ### 리스트와 키란 무엇인가?
 - 리스트는 자바스크립트의 변수나 객체를 하나의 변수로 묶어 놓은 배열과 같은 것입니다.
@@ -19,7 +119,7 @@ const listItem = numbers.map((number) =>
 ```
 
 ### 리스트의 키에 대해 알아보기
-- 리스트에서의 키는 "리스트에서 아이템을 구별하기 위한 고유한 문자열" 입니다.
+- 리스트에서의 키는 **"리스트에서 아이템을 구별하기 위한 고유한 문자열"** 입니다.
 - 이 키는 리스트에서 어떤 아이템이 변경, 추가 또는 제거되어는지 구분하기 위해 사용합니다.
 - 키는 같은 리스트에 있는 엘리언트 사이에서만 고유한 값이면 됩니다.
 
@@ -134,12 +234,12 @@ function MyComponent(props) {
 ### 나만의 훅 만들기
 - 필요 하다면 직접 훅을 만들어 쓸 수도 있습니다. 이것을 커스텀 훅 이라고 합니다.
 - 커스텀 훅을 만들어야 하는 상황
-- 다음 예는 연락처 목록을 제공하는데, 온라인인 사용자의 이름은 초록색으로 표시하는 UserListItem 컴포넌트 입니다.
+- 다음 예는 연락처 목록을 제공하는데, 온라인인 사용자의 이름은 초록색으로 표시하는 `UserListItem` 컴포넌트 입니다.
 
 ### 커스텀 훅 추출하기
 - 한가지 주의할 점은 일반 컴포넌트와 마찬가지로 다른 훅을 호출하는 것은 무조건 훅의 상위 레벨에서만 해야 합니다.
-- 이름은 use로 시작되도록 합니다. 그렇지 않으면 다른 훅를 불러올 수 없습니다.
-- useUserStatus() 훅의 목적은 사용자의 온라인/오프라인 상태를 구독하는 것 입니다.
+- 이름은 `use`로 시작되도록 합니다. 그렇지 않으면 다른 훅를 불러올 수 없습니다.
+- `useUserStatus()` 훅의 목적은 사용자의 온라인/오프라인 상태를 구독하는 것 입니다.
 
 ### 커스텀 훅 사용하기
 - 2에서 작성했던 코드를 사용자 훅을 사용해서 수정하면 다음과 같습니다.
@@ -182,7 +282,7 @@ export default function UserListItem (props) {
 
 2. 전달하려는 함수는 문자열에서 함수 그대로 전달
 
-- 이벤트가 발생했을 때 해당 이벤트를 처리하는 함수를 "이벤트 핸들러(Event Handler)"라고 합니다. 또는 이벤트가 발생하는 것을 계속 듣고 있다는 의미로 "이벤트 리스너(Event Listener)"라고 부르기도합니다.
+- 이벤트가 발생했을 때 해당 이벤트를 처리하는 함수를 `"이벤트 핸들러(Event Handler)"`라고 합니다. 또는 이벤트가 발생하는 것을 계속 듣고 있다는 의미로 `"이벤트 리스너(Event Listener)"`라고 부르기도합니다.
 
 ### 이벤트 핸들러 추가하는 방법은?
 ```js
@@ -210,21 +310,21 @@ class Toggle extends React.Component {
   }
 }
 ```
-- 버튼을 클릭하면 이벤트 핸들러 함수인 handleClick()함수를 호출 하도록 되어 있습니다.
-- bind를 사용하지 않으면 this.handleClick은 글로벌 스코프에서 호출되어 undefind으로 사용할 수 없기 때문입니다.
-- bind를 사용하지 않으려면 화살표 함수를 사용하는 방법도 있습니다.
+- 버튼을 클릭하면 이벤트 핸들러 함수인 `handleClick()함수`를 호출 하도록 되어 있습니다.
+- `bind`를 사용하지 않으면 this.handleClick은 글로벌 스코프에서 호출되어 **undefind**으로 사용할 수 없기 때문입니다.
+- `bind`를 사용하지 않으려면 화살표 함수를 사용하는 방법도 있습니다.
 - 하지만 클래스 컴포넌트는 이제 거의 사용하지 않기 때문에 이 내용은 참고만 합니다.
 
 ## 4월 17일 강의
 
 ### 훅이란 무엇인가?
 - 클래스형 컴포넌트에서는 생성자에서 state를 정의하고, setState()함수를 통해 state를 업데이트 합니다.
-- 예전에 사용하던 함수형 컴포넌트는 별도ㅜ로 state를 정의하거나, 컴포넌트의 생명주기에 맞춰서 어떤 코드가 실행되도록 할 수 없었습니다.
-- 함수형 컴포넌트에서도 state나 생명주기 함수의 기능을 사용하게 해주기 위해 추가된 기능이 바로 훅(Hook)입니다.
+- 예전에 사용하던 함수형 컴포넌트는 별도로 state를 정의하거나, 컴포넌트의 생명주기에 맞춰서 어떤 코드가 실행되도록 할 수 없었습니다.
+- 함수형 컴포넌트에서도 state나 생명주기 함수의 기능을 사용하게 해주기 위해 추가된 기능이 바로 `훅(Hook)`입니다.
 - 함수형 컴포넌트도 훅을 사용하여 클래스형 컴포넌트의 기능을 모두 동일하게 구현할 수 있ㅎ게 되었습니다.
 - Hook이란 'state와 생명주기 기능에 갈고기를 걸어 원하는 시점에 정해진 함수를 실행되도록 만든 함수'를 의미합니다.
-- 훅의 이름은 모두 'use'로 시작합니다.
-- 사용자 정의 훅(custom hook)을 만들 수 있으며, 이 경우에 이름은 자유롭게 할 수 있으나 'use'로 시작할 것을 권장합니다.
+- 훅의 이름은 모두 `use`로 시작합니다.
+- 사용자 정의 훅(custom hook)을 만들 수 있으며, 이 경우에 이름은 자유롭게 할 수 있으나 `use`로 시작할 것을 권장합니다.
 
 ### useState
 - useState는 함수형 컴포넌트에서 state를 사용하기 위한 Hook 입니다.
@@ -308,7 +408,7 @@ const memoizedValue = useMemo(
 - useMemo와 마찬가지로 의존성 배열 중 하나라도 변경되면 콜백함수를 반환합니다.
 
 ### useRef
-- useRef() 훅은 레퍼런ㅅ흐를 사용하기 위한 훅입니다.
+- useRef() 훅은 레퍼런스를 사용하기 위한 훅입니다.
 - 레퍼런스란 특정 컴포넌트에 접근할 수 있는 객체를 의미합니다.
 - useRef() 훅은 바로 이 레퍼런스 객체를 반환합니다.
 - 레퍼런스 객체에는 .current라는 속성이 있는데, 이것은 현재 참조하고 있는 엘리먼트를 의미합니다.
@@ -320,7 +420,7 @@ const refContainer = useRef(초기값);
 ## 4월 3일 강의
 
 ### Props 사용법
-JSX에서는 key-value쌍으로 props를 구성합니다.
+JSX에서는 key-value쌍으로 `props`를 구성합니다.
 ```js
 function App(props) {
   return (
@@ -353,7 +453,7 @@ function App(props) {
 }
 ```
 위의 코드처럼 props를 vlaue를 할당 할 수도 있고, 직접 중괄호를 사용하여 할당할 수도 있습니다.<br>
-JSX를 사용하지 않는 경우 props의 전달 방법은 createElement()함수를 사용하는 것입니다.
+JSX를 사용하지 않는 경우 props의 전달 방법은 `createElement()함수`를 사용하는 것입니다.
 
 ### <컴포넌트 만들기>
 ### 컴포넌트의 종류
