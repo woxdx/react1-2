@@ -1,4 +1,82 @@
 # 이원도 202230226
+## 6월 5일
+
+### Shared State
+- Shared state는 state의 공유를 의미합니다.
+- 같은 부모 컴포넌트의 state를 자식 컴포넌트가 공유해서 사용하는 것입니다.
+- 다음 그림은 부모 컴포넌트가 섭씨 온도의 state를 갖고 있고, 이 것을 컴포넌트C와 컴포넌트F가 공유해서 사용하는 것을 보여 줍니다.
+
+![Alt text](image.png)
+
+### 하위 컴포넌트에서 State 공유하기
+- 물의 끓음 여부를 알려주는 컴포넌트
+- 섭씨 온도 값을 props로 전달 받아 물이 끓는지 안끓는지 문자열로 출력해주는 컴포넌트
+```js
+function BoilingVerdict(props) {
+    if (props.celsius >= 100) {
+        return <p>물이 끓습니다.</p>;
+    }
+    return <p>물이 끓지 않습니다.</p>;
+}
+```
+### Shared State 적용하기
+- 다음은 하위 컴포넌트의 state를 부모 컴포넌트로 올려서 shared state를 적용합니다.
+- 이것을 Lifting State Up (State 끌어 올리기)라고 합니다.
+- 이를 위해 먼저 TemperatureInput 컴포넌트에서 온도 값을 가져오는 부분을 다음과 같이 수정합니다.
+- 이렇게 수정하면 온도를 state에서 가져오지 않고 props를 통해 가져옵니다.
+
+```js
+export default function TemperatureInput(props) {
+    //const [temperature, setTemperature] = useState('')
+    const handleChange = (e) => {
+        //setTemperature(e.target.value)
+        props.onTemperatureChange(e.target.value)
+    }
+        return(
+        <fieldset>
+            <legend>섭씨 온도를 입력하세요(단위: {scaleName[props.scale]})</legend>
+            <input type="number" value={props.temperature}
+            onChange={handleChange} />
+        </fieldset>
+    )
+}
+```
+- 또 한가지 컴포넌트의 state를 사용하지 않기 때문에 입력 값이 변경되었을 때 상위 컴포넌트로 변경된 값을 전달해 주어야 합니다.
+- 이를 위해 handler함수를 다음과 같이 수정해줍니다.
+- 최종 코드는 다음과 같이 state는 제거되고, 상위 컴포넌트에서 전달받은 값만 사용합니다.
+- 상위 컴포넌트인 Calculator에서 온도와 단위를 state로 갖고
+- 두개의 하위 컴포넌트는 각각 섭씨, 화씨로 변환된 온도와 단위, 그리고 온도를 업데이트하기 위한 함수를 props로 갖고 있습니다
+- 이렇게 모든 컴포넌트가 state를 갖지 않고, 상위 컴포넌트만
+
+### Calculator 컴포넌트 수정하기
+
+### 정리하면
+- 상위 컴포넌트만 Calculator에서 온도와 단위를 state로 갖고
+- 두개의 하위 컴포넌트는 각각 섭씨와 화씨로 변환된 온도와 단위, 그리고 온도를 업데이트하기 위한 함수를 props로 갖고 있습니다.
+- 이렇게 모든 컴포넌트가 state를 갖지 않고, 상위 컴포넌트로 올려서 공유하면 리액트를 더욱 간결하고 효율적이로 개발할 수 있습니다.
+
+### 합성(Compostion)에 대해 알보기
+- 합성은 여러 개의 컴포넌트를 합쳐서 새로운 컴포넌트를 만드는 것입니다.
+- 조합 방법에 따라 합성의 사용 기법은 다음과 같이 나눌 수 있습니다.
+
+### Containment(담다, 포함하다, 격리하다)
+- 특정 컴포넌트가 하위 컴포넌트를 포함하는 형태의 합성 방법입니다.
+- 컴포넌트에 따라서는 어떤 자식 엘리먼트가 들어올지 미리 예상할 수 없는 경우가 있습니다.
+- 범용적인 박스 역할을 하는 Sidebar 혹은 Dialog와 같은 컴포넌트에서 특히 자주 볼 수 있습니다.
+- 이런 컴포넌트에서는 children prop을 사용하여 자식 엘리먼트를 출력에 그대로 전달하는 것이 좋습니다.
+- 이때 children prop은 컴포넌트의 props에 기본적으로 들어있는 children속성을 사용합니다.
+- 다음과 같이 props.children을 사용하면 해당 컴포넌트의 하위 컴포넌트가 모두 children으로 들어오게 됩니다.
+```js
+function FancyBorder(props) {
+  return (
+    <div className={'FancyBorder FancyBorder-' + props.color}>
+      {props.children}
+    </div>
+  );
+}
+```
+- children은 다음 구조에서 세 번째 들어가는 파라미터 입니다.
+- 파라미터가 배열로 되어있는 이유는 
 ## 5월 29일
 ### textarea 태그
 - 여러 줄에 걸쳐서 나올 정도의 긴 텍스트를 입력받기 위한 HTML 태그
@@ -82,22 +160,6 @@ setTime(function() {
     ReactDOM.render(<input value={null} />, rootNode);
 }, 1000);
 ```
-### Shared State
-- 어떤 컴포넌트의 state에 있는 데이터를 여러 개의 하위 컴포넌트에서 공통적으로 사용하는 경우
-- 아래와 같이 자식 컴포넌트에서 각각 값을 가지고 있을 필요 없이 부모 컴포넌트에서 가지고 있는 값을 사용하는 경우를 예를 들 수 있음
-
-### 하위 컴포넌트에서 State 공유하기
-- 물의 끓음 여부를 알려주는 컴포넌트
-- 섭씨 온도 값을 props로 전달 받아 물이 끓는지 안끓는지 문자열로 출력해주는 컴포넌트
-```js
-function BoilingVerdict(props) {
-    if (props.celsius >= 100) {
-        return <p>물이 끓습니다.</p>;
-    }
-    return <p>물이 끓지 않습니다.</p>;
-}
-```
-
 
 ## 5월 22일
 ### 리스트와 키란 무엇인가?
