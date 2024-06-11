@@ -1,9 +1,10 @@
-import BoilingVerdict from './chapter_12/BoilingVerdict';
+import DarkOrLight from './chapter_14/DarkOrLight';
+import MainContent from './chapter_14/MainContent';
 
 function App() {
   return (
     <>
-      <BoilingVerdict celsius="101" />
+      <DarkOrLight/>
     </>
   );
 }
