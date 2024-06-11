@@ -1,12 +1,157 @@
 # 이원도 202230226
-## 6월 5일
+## 6월 11일
+### Containment와 Specialization을 같이 사용하기
+- Containment와를 위해서 props.children을 사용하고, Specialization을 위해 직접 정의한 props를 사용하면 됩니다.
+- Dialog컴포넌트는 이전의 것과 비슷한데 Containment를 위해 끝부분에 props.childre을 추가 했습니다.
+- Dialog를 사용하는 SignUpDialog는 Specialization을 위해 props인 title, message에 값을 넣어주고 있고, 입력을 받기위해 `<input>`과 `<button>`을 사용합니다.
+이 두개의 태그는 모두 props.children으로 전달되어 다이얼로그에 표시됩니다.
+- 이러한 형태로 Cotainment와 Specialization을 동시에 사용할 수 있습니다.
+```js
+function Dialog(props) {
+  	return (
+      	<FancyBorder color="blue">
+      		<h1 className="Dialog-title">
+      			{props.title}
+			</h1>
+			<p className="Dialog-message">		
+              	{props.message}
+			</p>
+			// 이를 통해 하위 컴포넌트가 Dialog 하단에 렌더링
+			{props.children}
+		</FancyBorder>
+	);
+}
+```
+```js
+function SignUpDialog(props) {
+  	const [nickname, setNickname] = useState('');
 
+  	const handleChange = (event) => {
+      	setNickname(event.target.value);
+    }
+    
+    const handleSignUp = () => {
+      	alert(`어서오세요. ${nickname}님!`);
+    }
+    
+    return (
+      	<Dialog
+   			// Specialization
+      		// Specialization을 위한 props인 title, message에 값을 넣어줌
+      		title="화성 탐사 프로그램"
+      		message="닉네임을 입력해 주세요.">
+      	// Containment
+      	// 사용자로부터 입력받고 가입을 하도록 유도하기 위해 input과 button 태그 
+      	// props.children에 전달, Dialog에 표시
+          <input
+              value={nickname}
+              onChange={handleChange} />
+          <button onClick={handleSignUp}>
+              가입하기
+          </button>
+         </Dialog>
+	);
+}
+```
+### 컨텍스트란 무엇인가?
+- 기존의 일반적인 리액트에서는 데이터가 컴포넌트의 props를 통해 부모에서 자식으로 단반향으로 전달되었습니다.
+- 컨텍스트는 리액트 컴포넌트들 사이에서 데이터를 기존의 props를 통해 전달하는 방식 대신 `"컴포넌트 트리를 통해 곧바로 컴포넌트에 전달하는 새로운 방식"`을 제공합니다.
+- 이 것을 통해 어떤 컴포넌트라도 쉽게 데이터에 접근할 수 있습니다.
+- 컨텍스트를 사용하면 일일이 props로 전달할 필요 없이 그림처럼 데이터를 필요로 하는 컴포넌트에 곧바로 데이터를 수 있습니다.
+
+![Alt text](img/image-1.png)
+![Alt text](<img/image (1).png>)
+
+### 언제 컨텍스트를 사용해야 할까?
+- 여러 컴포넌트에서 자주 필요로 하는 데이터는 로그인 여부, 로그인 정보, UI 테마, 현재 선택된 언어 등이 있습니다.
+- 이런 데이터들을 기존의 방식대로 컴포넌트의 props를 통해 넘겨주는 예를 페이지 392에서 보여주고 있습니다.
+- 예제에서 처럼 props를 통해 데이터를 전달하는 기존 방식은 실제 데이터를 필요로 하는 컴포넌트까지의 깊이가 깊어질 수록 복잡해 집니다.
+- 또한 반복전인 코드를 계속해서 작성해 주어야 하기 때문에 비효율적이고 가독성이 떨어집니다.
+- 컨텍스트를 사용하면 이러한 방식을 깔끔하게 개선할 수 있습니다.
+
+### 상속에 대해 알아보기
+- 합성과 대비되는 개념으로 상속이 있습니다.
+- 자식 클래스는 부모 클래스가 가진 변수나 함수 등의 속성을 모두 갖게 되는 개념입니다.
+- 하지만 리액트에서는 상속보다는 합성을 통해 새로운 컴포넌트를 생성합니다.
+- 복잡한 컴포넌트를 쪼개 여러 개의 컴포넌트로 만들고, 만든 컴포넌트들을 조합하여 새로운 컴포넌트를 만들자
+
+### 컨텍스트를 사용하기 전에 고려할 점
+- 컨텍스트는 다른 레벨의 많은 컴포넌트가 특정 데이터를 필요로 하는 경우에 주로 사용합니다.
+- 하지만 무조건 컨텍스트를 사용하는 것이 좋은 것은 아닙니다.
+- 왜냐하면 컴포넌트와 컨텍스트가 연동되면 재사용성이 떨어지기 때문입니다.
+- 따라서 다른 레벨의 많은 컴포넌트가 데이터를 필요로 하는 경우가 아니면 props를 통해 데이터를 전달하는 컴포넌트 합성 방법이 더 적합 합니다.
+
+### 컨텍스트 API
+- 이 절에서는 리액트에서 제공하는 컨텍스트 API를 통해 컨텍스트를 어떻게 사용하는지에 대해 알아 봅시다.
+  ### [1] React.createContext
+    - 컨텍스트를 생성하기 위한 함수입니다.
+    - 파라미터에는 기본값을 넣어주면 됩니다.
+    - 하위 컴포넌트는 가장 가까운 상위 레벨의 Provider로 부터 컨텍스트를 받게 되지만, 만일 Provider를 찾을 수 없다면 설정한 기본값을 사용하게 됩니다.
+
+  ### [2] Context.Provider
+  - Context.Provider 컴포넌트로 하위 컴포넌트들을 감싸주면 모든 하위 컴포넌트들이 해당 컨텍스트의 데이터에 접근할 수 있게 됩니다.
+  ```js
+  <MyContext.Provider value = {/* some vlaue */ }> 
+  ```
+  - Provider 컴포넌트에서 value는 props가 있고, 이것은 Provider 컴포넌트 하위에 있는 컴포넌트에게 전달됩니다.
+  - 하위 컴포넌트를 consumer 컴포넌트라고 부릅니다.
+
+  ### [3] Class.contextType
+  - Provider 하위에 있는 클래스 컴포넌트에서 컨텍스트의 데이터에 접근하기 위해 사용합니다.
+  - Class 컴포넌트는 더 이상 사용하지 않으므로 참고만 합니다.
+
+  ### [4] Context.Consumer
+  - 함수형 컴포넌트에서 Context.Consumer를 사용하여 컨텍스트를 구독할 수 있습니다.
+  - 컴포넌트의 자식으로 함수가 올 수 있는데 이것을 function as a child라고 부릅니다.
+  - Context.Consumer로 감싸주면 자식으로 들어간
+
+  ### [5] Context.displayName
+  - 컨텍스트 객체는 displayName이라는 문자열 속성을 갖습니다.
+  - 크롬의 리액트 개발자 도구에서는 컨텍스트의 Provider나 Consumer를 표시할 때 displayName를 함께 표시해 줍니다.
+  - 예를 들어 아래와 같이 코드를 작성하면 MyDisplayName이 리액트 개발자 도구에 표시됩니다.
+  ```js
+  const MyContext = React.createContext(/* some value */);
+  MyContext.displayName = 'MyDisplayName';
+
+  // 개발자 도구에 "MyDisplayName.Provider"로 표시됨
+  <MyContext.Provider>
+    
+  // 개발자 도구에 "MyDisplayName.Consumer"로 표시됨
+  <MyContext.Consumer>
+  ```
+
+### 여러 개의 컨텍스트 사용하기
+- 여러 개의 컨텍스트를 동시에 사용하려면 Context.Provider를 중첩해서 사용합니다.
+- 예제에서는 ThemeContext와 UserContext를 중첩해서 사용하고 있습니다.
+- 예제 코드는 페이지 403~404에 있습니다.
+- 이런 방법으로 여러 개의 컨텍스트를 동시에 사용할 수 있습니다.
+- 하지만 두 개 또는 그 이상의 컨텍스트 값이 자주 함께 사용될 경우 모든 값을 한 번에 제공해 주는 별도의 render prop 컴포넌트를 직접 만드는 것을 고려하는 것이 좋습니다.
+
+### useContext
+- 함수형 컴포넌트에서 컨텍스트를 사용하기 위해 컴포넌트를 매번 Consumer 컴포넌트로 감싸주는 것보다 더 좋은 방법이 있습니다. 바로 7장에서 배운 Hook 입니다.
+- `useContext()` 훅은 React.createContext() 함수 호출로 생성된 컨텍스트 객체를 인자로 받아서 현재 컨텍스트의 값을 리턴합니다.
+
+```js
+function MyComponent(props){
+	const value = useContext(MyContext);
+  
+  	return (
+    	...
+    )
+}
+```
+- 이 방법도 가장 가까운 상위 Provider 부터 컨텍스트의 값을 받아옵니다.
+- 만일 값이 변경되면 `useContext()` 훅을 사용하는 컴포넌트가 재 렌더링 됩니다.
+- 또한 `useContext()` 훅을 사용할 때에는 파라미터로 컨텍스트 객체를 넣어줘야 한다는 것을 기억해야 합니다.
+
+
+## 6월 5일
 ### Shared State
 - Shared state는 state의 공유를 의미합니다.
 - 같은 부모 컴포넌트의 state를 자식 컴포넌트가 공유해서 사용하는 것입니다.
 - 다음 그림은 부모 컴포넌트가 섭씨 온도의 state를 갖고 있고, 이 것을 컴포넌트C와 컴포넌트F가 공유해서 사용하는 것을 보여 줍니다.
 
-![Alt text](image.png)
+![Alt text](img/image.png)
 
 ### 하위 컴포넌트에서 State 공유하기
 - 물의 끓음 여부를 알려주는 컴포넌트
@@ -46,9 +191,7 @@ export default function TemperatureInput(props) {
 - 최종 코드는 다음과 같이 state는 제거되고, 상위 컴포넌트에서 전달받은 값만 사용합니다.
 - 상위 컴포넌트인 Calculator에서 온도와 단위를 state로 갖고
 - 두개의 하위 컴포넌트는 각각 섭씨, 화씨로 변환된 온도와 단위, 그리고 온도를 업데이트하기 위한 함수를 props로 갖고 있습니다
-- 이렇게 모든 컴포넌트가 state를 갖지 않고, 상위 컴포넌트만
-
-### Calculator 컴포넌트 수정하기
+- 만일 여러 개의 chidren 집합이 필요할 경우에도 별도로 props를 정의해서 각각 원하는 컴포넌트를 넣어줍니다.
 
 ### 정리하면
 - 상위 컴포넌트만 Calculator에서 온도와 단위를 state로 갖고
@@ -59,13 +202,13 @@ export default function TemperatureInput(props) {
 - 합성은 여러 개의 컴포넌트를 합쳐서 새로운 컴포넌트를 만드는 것입니다.
 - 조합 방법에 따라 합성의 사용 기법은 다음과 같이 나눌 수 있습니다.
 
-### Containment(담다, 포함하다, 격리하다)
-- 특정 컴포넌트가 하위 컴포넌트를 포함하는 형태의 합성 방법입니다.
-- 컴포넌트에 따라서는 어떤 자식 엘리먼트가 들어올지 미리 예상할 수 없는 경우가 있습니다.
-- 범용적인 박스 역할을 하는 Sidebar 혹은 Dialog와 같은 컴포넌트에서 특히 자주 볼 수 있습니다.
-- 이런 컴포넌트에서는 children prop을 사용하여 자식 엘리먼트를 출력에 그대로 전달하는 것이 좋습니다.
-- 이때 children prop은 컴포넌트의 props에 기본적으로 들어있는 children속성을 사용합니다.
-- 다음과 같이 props.children을 사용하면 해당 컴포넌트의 하위 컴포넌트가 모두 children으로 들어오게 됩니다.
+  **1. Containment (담다, 포함하다, 격리하다)**
+  - 특정 컴포넌트가 하위 컴포넌트를 포함하는 형태의 합성 방법입니다.
+  - 컴포넌트에 따라서는 어떤 자식 엘리먼트가 들어올지 미리 예상할 수 없는 경우가 있습니다.
+  - 범용적인 박스 역할을 하는 Sidebar 혹은 Dialog와 같은 컴포넌트에서 특히 자주 볼 수 있습니다.
+  - 이런 컴포넌트에서는 children prop을 사용하여 자식 엘리먼트를 출력에 그대로 전달하는 것이 좋습니다.
+  - 이때 children prop은 컴포넌트의 props에 기본적으로 들어있는 children속성을 사용합니다.
+  - 다음과 같이 props.children을 사용하면 해당 컴포넌트의 하위 컴포넌트가 모두 children으로 들어오게 됩니다.
 ```js
 function FancyBorder(props) {
   return (
@@ -75,8 +218,40 @@ function FancyBorder(props) {
   );
 }
 ```
-- children은 다음 구조에서 세 번째 들어가는 파라미터 입니다.
-- 파라미터가 배열로 되어있는 이유는 
+### Specialization (특수화, 전문화)
+- 웰컴다이얼로그는 다이얼로그의 특별한 케이스입니다.
+- 범용적인 개념을 구별이 되게 구체화하는 것을 특수화라고 합니다.
+- 객체지향 언어에서는 상속을 사용하여 특수화를 구현합니다.
+- 리액트에서는 합성을 사용하여 특수화를 구현합니다.
+- 다음 예와 같이 특수화는 범용적으로 쓸 수 있는 컴포넌트를 만들어 놓고 이를 특수한 목적으로 사용하는 합성 방식입니다.
+```js
+function Dialog(props) {
+  	return (
+      	<FancyBorder color="blue">
+      		<h1 className="Dialog-title">
+      			// 두 가지 props 사용
+      			// 제목
+      			{props.title}
+			</h1>
+			<p className="Dialog-message">		
+              	// 메시지
+              	{props.message}
+			</p>
+		</FancyBorder>
+	);
+}
+
+function WelcomeDialog(props) {
+  	return (
+      	<Dialog
+      		title="어서 오세요"
+      		message="우리 사이트에 방문하신 것을 환영합니다!"
+      	/>
+    );
+}
+
+```
+
 ## 5월 29일
 ### textarea 태그
 - 여러 줄에 걸쳐서 나올 정도의 긴 텍스트를 입력받기 위한 HTML 태그
