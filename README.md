@@ -1,4 +1,78 @@
 # 이원도 202230226
+
+## 6월 12일
+### CSS란?
+- CSS는 Cascading Style Sheets의 약자로 스타일링을 위한 언어입니다.
+- Cascading이란 계단식이라는 뜻으로 한 엘리먼트에 여러 스타일이 적용될 경우 **스타일간의 충돌을 막기 위해 계단식으로 스타일을 적용**시키는 규칙을 갖고 있습니다.
+- 즉 하나의 스타일이 여러 개의 엘리먼트에 적용될 수도 있고, **하나의 엘리먼트에도 여러 개의 스타일이 적용**될 수도 있습니다.
+- 엘리먼트에 스타일이 적용되는 규칙을 `selector(선택자)`라고 합니다. CSS는 이 선택자와 스타일로 이루어 집니다.
+- 이번 장에서는 선택자와 스타일을 카테고리별로 나누어 학습합니다.
+
+### CSS 문법과 선택자
+- 선택자를 먼저 쓰고 다음에 적용할 스타일을 중괄호 안에 세미콜론으로 구분하여 하나씩 작성합니다.
+- 선택자는 HTML 엘리먼트를 직접 넣어도 되고, 에리먼트의 조합 혹은 class의 형태로 작성 가능합니다.
+- 스타일은 `property(속성)` `key value(키 값)`으로 이루어 지며, 이들은 `콜론(:)`으로 구분하고, 각 스타일은 `세미콜론(;)`으로 구분합니다.
+
+### 상태 선택자
+- ![Alt text](img/image3.png)
+
+### 레이아웃과 관련된 속성
+- 화면에 엘리먼트를 어떻게 배치할 것인지를 정의합니다.
+- 가장 중요한 속성은 display입니다.
+- 모든 엘리먼트는 기본 display 속성을 갖고 있지만 이 기본값을 변경해 줄 수 있습니다.
+```js
+div {
+  display: none | block | inline | flex;
+}
+```
+- none는 존재는 하지만 화면에 보이지 않는 것으로, 자바스크립트를 넣을 때 많이 사용합니다.
+- block은 세로로 정렬되며, with의 heigh를 갖을 수 있다. 크기와 상관없이 한 줄을 점유합니다.
+- inline은 가로로 정렬되며, with의 heigh를 갖을 수 없다. 컨텐츠의 크기만큼 공간을 점유합니다.
+- inline-block는 기본적으로 inline의 특성을 갖지만, with와 heigh 등 block의 특성을 사용할 수 있습니다.
+
+### 대표적인 block과 inline 태그는 다음과 같습니다.
+- block
+- inline
+- flex는 컨테이너의 형태로 엘리먼트를 관리합니다.
+- 최근 들어서는 Grid를 많이 사용합니다. Flex가 1차원 적이라면 Grid는 2차원 적으로 관리가 가능하기 때문
+- visibilit 속성은 엘리먼트 가시성을 정의합니다
+```js
+div{
+  visiblily: visible | hidden;
+}
+```
+- 여기서 중요한 것은 diplay:none과 visibid는 차이입니다.
+
+### 폰트와 관련된 속성
+```js
+#title {
+	font-family: "사용할 글꼴 이름", <일반적인 글꼴 분류>;
+    font-siz: value;
+    font-weight: normal | bold;
+    font-style: normal | italic | oblique;
+}
+```
+
+### Style-components
+- CSS 문법을 그대로 사용하면서 결과물을 스타일링된 컴포넌트 형태로 만들어 주는 오픈소스  라이브러리입니다.
+- 컴포넌트의 개념을 사용하고 있어 리액트 개발에 많이 사용됩니다.
+  ### 1. Styled-components 설치하기
+  - npm install --save styled-components
+  - 교재에는 위와 같이 save가 나와 있지만 npm v5부터는 생략해도 됩니다.
+
+  ### 2. Styled-components 기본 사용법
+  - 태그드 템플릿 리터럴을 사용하여 구성 요소의 스타일을 지정합니다.
+  - 태그드 템플릿 리터럴을 자바스크립트에서 제공하는 문법 중 하나로 리터럴을 템플릿 현태로 사용하는 것입니다.
+
+  ### 3. Styled-components props 사용하기
+  - props를 이용하여 조건이나 동적으로 변하는 값을 사용해서 스타일링을 할 수 있습니다.
+
+  ### 4. Styled-components의 스타일 확장하기
+  - 먼저 정의한 스타일 컴포넌트에 스타일을 추가하여 재정의 하는 것이 가능합니다.
+
+
+
+
 ## 6월 11일
 ### Containment와 Specialization을 같이 사용하기
 - Containment와를 위해서 props.children을 사용하고, Specialization을 위해 직접 정의한 props를 사용하면 됩니다.
