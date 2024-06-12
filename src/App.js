@@ -1,10 +1,10 @@
-import DarkOrLight from './chapter_14/DarkOrLight';
-import MainContent from './chapter_14/MainContent';
+import Block from "./chapter_15/Block";
+
 
 function App() {
   return (
     <>
-      <DarkOrLight/>
+      <Block />
     </>
   );
 }
